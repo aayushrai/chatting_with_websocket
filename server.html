@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket Thing1</title>
+</head>
+<body>
+    <h1 id="name" ></h1>
+    <br>
+    <br>
+    <div id="text">
+        
+    </div>
+
+
+    <input type="text" id="msg"/>
+    <button onclick="sendMsg()">Send Msg</button>
+</body>
+<script>
+    // Create WebSocket connection.
+    const socket = new WebSocket('ws://localhost:5000');
+    let name = prompt('Enter you name:');
+    document.getElementById("name").innerHTML = name;
+    console.log(name)
+    // Connection opened
+    socket.addEventListener('open', function (event) {
+        console.log('Connected to the WS Server!')
+    });
+
+    // Connection closed
+    socket.addEventListener('close', function (event) {
+        console.log('Disconnected from the WS Server!')
+    });
+
+    // Listen for messages
+    socket.addEventListener('message', function (event) {
+        const data = event.data;
+        console.log('Message from server ', data);
+        const msg = data.split("0u0");
+        console.log(msg[0])
+        console.log(msg[1])
+        ele = document.createElement("p");
+        ele.innerHTML = msg[0] +" >> " +msg[1];
+        document.getElementById("text").appendChild(ele)
+    });
+    // Send a msg to the websocket
+    const sendMsg = () => {
+        msg = document.getElementById("msg").value;
+        document.getElementById("msg").value = "";
+        ele = document.createElement("p");
+        ele.innerHTML = name +" >> " +msg;
+        document.getElementById("text").appendChild(ele)
+        socket.send(name + "0u0"+ msg);
+        console.log(msg)
+    }
+</script>
+</html>
